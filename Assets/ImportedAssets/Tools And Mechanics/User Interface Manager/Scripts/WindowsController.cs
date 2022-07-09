@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace ToolsAndMechanics.UserInterfaceManager
 {
@@ -9,8 +10,6 @@ namespace ToolsAndMechanics.UserInterfaceManager
     /// </summary>
     public class WindowsController : MonoBehaviour
     {
-        public static WindowsController Instance { get; private set; } = null;
-
         [SerializeField]
         private Canvas canvas;
         [SerializeField]
@@ -22,6 +21,9 @@ namespace ToolsAndMechanics.UserInterfaceManager
         [SerializeField]
         private List<WindowData> windowsData;
 
+        [Inject]
+        private DiContainer container;
+
         private Dictionary<string, Window> windowsDic = new Dictionary<string, Window>();
 
         private Window lastWindow;
@@ -30,16 +32,8 @@ namespace ToolsAndMechanics.UserInterfaceManager
 
         private void Awake()
         {
-            if (Instance != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
-
             string canvasName = canvas.name;
-            canvas = Instantiate(canvas);
+            canvas = Instantiate(canvas, transform);
             canvas.name = canvasName;
             CreateWindow(firstWindowData);
             SetWindow(firstWindowData, false);
@@ -61,7 +55,7 @@ namespace ToolsAndMechanics.UserInterfaceManager
                 return;
             }
 
-            Window window = Instantiate(data.WindowPrefab, canvas.transform);
+            Window window = container.InstantiatePrefab(data.WindowPrefab, canvas.transform).GetComponent<Window>();
             window.gameObject.name = data.Id;
             window.gameObject.SetActive(false);
             windowsDic.Add(data.Id, window);

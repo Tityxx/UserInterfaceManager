@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace ToolsAndMechanics.UserInterfaceManager
 {
@@ -14,6 +15,9 @@ namespace ToolsAndMechanics.UserInterfaceManager
         [SerializeField]
         private bool closeCurrentWindow;
 
+        [Inject]
+        private WindowsController controller;
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -24,7 +28,7 @@ namespace ToolsAndMechanics.UserInterfaceManager
         {
             if (closeCurrentWindow)
                 btn.interactable = false;
-            WindowsController.Instance.SetWindow(window, closeCurrentWindow);
+            controller.SetWindow(window, closeCurrentWindow);
         }
     }
 }
